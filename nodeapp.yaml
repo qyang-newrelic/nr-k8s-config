@@ -1,0 +1,30 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: nodeapp-deployment
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels: # labels to select/identify the deployment
+        app: node-app
+    spec:     # pod spec
+      containers:
+      - name: node-app
+        image: yangqi2004/node-app:latest # image we pushed
+        ports:
+        - containerPort: 8080
+        env:
+        - name: NEWRELIC_ENABLE
+          value: "true"
+        - name: NEW_RELIC_APP_NAME
+          value: "nodeapp-k8s"
+        - name: NEW_RELIC_DISTRIBUTED_TRACING_ENABLED
+          value: "true"
+        - name: NEW_RELIC_BROWSER_MONITOR_ENABLE
+          value: "true"
+        - name: NEW_RELIC_LICENSE_KEY
+          valueFrom:
+            secretKeyRef:
+              name: qyang-secret
+              key: newrelic_license_key
